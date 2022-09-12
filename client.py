@@ -1,3 +1,4 @@
+from codecs import escape_encode
 import json
 import requests
 from requests import PreparedRequest
@@ -14,9 +15,10 @@ class MyDay:
     def __init__(self, email, password) -> None:
         self.email = email
         self.password = password
+        self.base = "https://api.myday.cloud/"
         self.home = "https://coleggwent.myday.cloud/dashboard/home"
-        self.calendar_endpoint = "https://api.myday.cloud/legacy/api/aggregate/v2/calendaritem"
-
+        self.calendar_endpoint = self.base + "legacy/api/aggregate/v2/calendaritem"
+        self.session_endpoint = self.base + "sessions/session/"
 
     def login(self) -> None:
         browser = webdriver.Chrome("bin/chromedriver")
@@ -42,6 +44,7 @@ class MyDay:
             WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, "//h1[@ng-bind='$root.$title']")))
             storage = browser.execute_script("return window.localStorage;")
             bearer_token = json.loads(storage["myday-auth"])["access_token"]
+            self.storage = json.loads(storage)
             self.bearer_token = bearer_token
         except TimeoutException:
             print("Page timeout - Try again")
@@ -63,3 +66,13 @@ class MyDay:
                 raise Exception('Calendar Query Failed - Maybe an expired Bearer token?')
         except requests.exceptions.RequestException as e:
             raise e
+
+    def remove_session(self) -> str:
+        bearer_token = self.bearer_token
+        headers = {"Authorization": bearer_token}
+        session_id = self.storage["myday-session"]["id"]
+        try:
+            x = requests.delete(self.session_endpoint + session_id, headers=headers)
+            return x.text
+        except:
+            raise Exception("Could not delete session - maybe session does not exist anymore?")
