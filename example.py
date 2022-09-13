@@ -1,4 +1,4 @@
-from ..client import MyDay
+from client import MyDay
 from dotenv import load_dotenv
 import os
 
@@ -10,8 +10,8 @@ def main():
     client = MyDay(os.getenv("EMAIL"), os.getenv("PASSWORD"))
     client.login()
 
-    events = client.get_calendar()
+    events = client.get_attendance()
     print(events)
 
     # Dismantle the client after running the things we need
-    client.remove_session()
+main()
