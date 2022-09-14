@@ -116,7 +116,7 @@ class MyDay:
         headers = {"Authorization": self.bearer_token}
         try:
             res = requests.get("{}{}/{}/entries".format(self.news_partition_endpoint, row_key, feed_id), headers=headers, params={'amount': '10'})
-            if res.status_code is not 404 and res.text is not 'There is no news feed with the given ID.':
+            if res.status_code != 404 and res.text != 'There is no news feed with the given ID.':
                 return res.json()["model"]
         except:    
             raise Exception("[*] News Query Failure | Row Key: {} | Feed ID: {}".format(row_key, feed_id))
