@@ -26,6 +26,8 @@ class MyDay:
         self.alert_read_endpoint = self.base + "alerts/v3/read"
         self.endsession_endpoint = self.base + "connect/endsession"
         self.attendance_endpoint = self.base + "legacy/api/aggregate/attendancemark"
+        self.alerts_endpoint = self.base + "alerts/v3?isMobile=false"
+        self.news_partition_endpoint = self.base + "newsroom/v2/news/partition/"
 
     def login(self) -> None:
 
@@ -74,6 +76,7 @@ class MyDay:
         except TimeoutException:
             print("[*] Page Timeout")
 
+
     def get_calendar(self, start=None, end=None):
         headers = {"Authorization": self.bearer_token}
         try:
@@ -89,6 +92,7 @@ class MyDay:
                 raise Exception('[*] Calendar Query Failure')
         except requests.exceptions.RequestException as e:
             raise e
+
 
     def get_attendance(self, start=None, end=None):
         headers = {"Authorization": self.bearer_token}
@@ -106,13 +110,33 @@ class MyDay:
                     return res.json()
         except:
             raise Exception("[*] Attendance Query Failure")
-            
+
+
+    def get_news(self, row_key, feed_id):
+        headers = {"Authorization": self.bearer_token}
+        try:
+            res = requests.get("{}{}/{}/entries".format(self.news_partition_endpoint, row_key, feed_id), headers=headers, params={'amount': '10'})
+            if res.status_code is not 404 and res.text is not 'There is no news feed with the given ID.':
+                return res.json()["model"]
+        except:    
+            raise Exception("[*] News Query Failure | Row Key: {} | Feed ID: {}".format(row_key, feed_id))
+
+
+    def get_alerts(self):
+        headers = {"Authorization": self.bearer_token}
+        try:
+            res = requests.get(self.alerts_endpoint, headers=headers)
+            if res.status_code == 200:
+                return res.json()["alerts"]
+        except:
+            raise Exception("[*] Could not get alerts")    
+
 
     def read_alert(self, alert_id):
         bearer_token = self.bearer_token
         headers = {"Authorization": bearer_token}
         data = {"alertIds": [alert_id]}
         try:
-            requests.put(data, headers=headers)
+            requests.put(self.alert_read_endpoint, data=data, headers=headers)
         except:
             raise Exception("[*] Could not mark alert as read")
