@@ -13,6 +13,10 @@ import os
 
 class MyDay:
     def __init__(self, email, password) -> None:
+        self.bearer_token = None
+        self.storage = None
+        self.id_token = None
+        self.tenant_id = None
         self.email = email
         self.password = password
         self.session = None
@@ -66,7 +70,7 @@ class MyDay:
             auth = json.loads(storage["myday-auth"])
             bootstrap = json.loads(storage["bootstrap"])
 
-            # We just setup our most needed properties for pulling specific data
+            # We just set up our most needed properties for pulling specific data
             self.storage = json.dumps(storage)
             self.bearer_token = auth["access_token"]
             self.id_token = auth["id_token"]
@@ -75,7 +79,6 @@ class MyDay:
 
         except TimeoutException:
             print("[*] Page Timeout")
-
 
     def get_calendar(self, start=None, end=None):
         headers = {"Authorization": self.bearer_token}
@@ -93,7 +96,6 @@ class MyDay:
         except requests.exceptions.RequestException as e:
             raise e
 
-
     def get_attendance(self, start=None, end=None):
         headers = {"Authorization": self.bearer_token}
         try:
@@ -103,7 +105,7 @@ class MyDay:
                 }
                 res = requests.get(self.attendance_endpoint, headers=headers, params=params)
                 if res.status_code == 200:
-                    return res.json() 
+                    return res.json()
             else:
                 res = requests.get(self.attendance_endpoint, headers=headers)
                 if res.status_code == 200:
@@ -111,16 +113,15 @@ class MyDay:
         except:
             raise Exception("[*] Attendance Query Failure")
 
-
     def get_news(self, row_key, feed_id):
         headers = {"Authorization": self.bearer_token}
         try:
-            res = requests.get("{}{}/{}/entries".format(self.news_partition_endpoint, row_key, feed_id), headers=headers, params={'amount': '10'})
+            res = requests.get("{}{}/{}/entries".format(self.news_partition_endpoint, row_key, feed_id),
+                               headers=headers, params={'amount': '10'})
             if res.status_code != 404 and res.text != 'There is no news feed with the given ID.':
                 return res.json()["model"]
-        except:    
+        except:
             raise Exception("[*] News Query Failure | Row Key: {} | Feed ID: {}".format(row_key, feed_id))
-
 
     def get_alerts(self):
         headers = {"Authorization": self.bearer_token}
@@ -129,8 +130,7 @@ class MyDay:
             if res.status_code == 200:
                 return res.json()["alerts"]
         except:
-            raise Exception("[*] Could not get alerts")    
-
+            raise Exception("[*] Could not get alerts")
 
     def read_alert(self, alert_id):
         bearer_token = self.bearer_token
