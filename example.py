@@ -14,4 +14,7 @@ def main():
     print(events)
 
     # Dismantle the client after running the things we need
+    client.logout()
+
+
 main()
