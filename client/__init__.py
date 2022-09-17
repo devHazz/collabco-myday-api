@@ -1,7 +1,5 @@
-import ast
 import json
 import requests
-from requests import PreparedRequest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -10,7 +8,6 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
-import platform
 
 
 class MyDay:
