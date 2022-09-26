@@ -48,4 +48,33 @@
 **Request Body:** `{"alertIds": [{alertId}]}`
 
 ## Success Response
-**Code:** `204 No Content`
+**Code:** `204 No Content`  
+
+# Get Subscriptions
+
+### `GET alerts/v3/subscriptions?isMobile=false`  
+**Authorization:** `Bearer Token`  
+**HTTP Query Params (Required):** `bool isMobile`  
+
+## Success Response
+**Code:** `200 OK`  
+**Example Response:**
+
+```json
+[
+  {
+    "channel": {
+      "id": "",
+      "tenantId": "",
+      "name": "essential_alerts",
+      "displayName": "1 - Essential alerts all staff and learners",
+      "description": "Essential alerts all staff and learners",
+      "tags": [],
+      "type": "Standard",
+      "allowUserPreferences": false,
+      "subscriptionOption": "Mandatory"
+    },
+    "userPreferences": null
+  }
+]
+```  
