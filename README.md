@@ -1,8 +1,7 @@
-# Collabco: MyDay API
+# Collabco: MyDay API Wrapper
 
 ## Requirements
- - Chrome v105 (Due to Chromedriver limitations)
- - Windows ONLY (Due to the flow that's required for auth)
+ - Latest Chrome Version (Match with the latest ChromeDriver install)
  - MyDay Account with Coleg Gwent Privileges
 
 ## About
